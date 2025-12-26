@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Modern CRUD</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="totalUsers">0</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="newToday">0</h3>
+          <p>New Today</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="activeUsers">0</h3>
+          <p>Active Users</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+          <i class="fas fa-database"></i>
+        </div>
+        <div class="stat-content">
+          <h3 id="storageUsed">0 MB</h3>
+          <p>Storage Used</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1><i class="fas fa-th-large"></i> User Management</h1>
+        <p class="subtitle">Manage and monitor all registered users (<span id="userCount">0</span> total)</p>
+      </div>
+      <button type="button" class="add-user-btn" id="addUserBtn">
+        <i class="fas fa-plus"></i>
+        Add New User
+      </button>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="controls-section">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, email or mobile...">
+      </div>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">
+          <i class="fas fa-list"></i> All
+        </button>
+        <button class="filter-btn" data-filter="recent">
+          <i class="fas fa-clock"></i> Recent
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h2><i class="fas fa-table"></i> User Directory</h2>
+        <div class="table-actions">
+          <button class="icon-btn" title="Refresh">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+          <button class="icon-btn" title="Export">
+            <i class="fas fa-download"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name <i class="fas fa-sort"></i></th>
+              <th>Email <i class="fas fa-sort"></i></th>
+              <th>Mobile <i class="fas fa-sort"></i></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users will be loaded here -->
+            <tr class="loading-row">
+              <td colspan="5">
+                <div class="loader-container">
+                  <div class="loader"></div>
+                  <p>Loading users...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit User</h2>
+        <span class="close" id="closeModalBtn">&times;</span>
+      </div>
+      <form id="editForm" enctype="multipart/form-data">
+        <input type="hidden" id="editUserId" />
+        
+        <div class="form-group">
+          <label for="editName">
+            <i class="fas fa-user"></i>
+            Full Name
+          </label>
+          <input type="text" id="editName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editDob">
+            <i class="fas fa-calendar"></i>
+            Date of Birth
+          </label>
+          <input type="date" id="editDob" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editEmail">
+            <i class="fas fa-envelope"></i>
+            Email Address
+          </label>
+          <input type="email" id="editEmail" required />
+        </div>
+
+        <div class="form-group">
+          <label for="editMobile">
+            <i class="fas fa-phone"></i>
+            Mobile Number
+          </label>
+          <input type="text" id="editMobile" maxlength="10" required />
+        </div>
+
+        <div class="form-group file-upload">
+          <label for="editPhoto">
+            <i class="fas fa-camera"></i>
+            Profile Photo (Optional)
+          </label>
+          <div class="file-input-wrapper">
+            <input type="file" id="editPhoto" accept="image/*" />
+            <label for="editPhoto" class="file-label">
+              <i class="fas fa-upload"></i>
+              <span class="edit-file-text">Choose new photo</span>
+            </label>
+          </div>
+          <img id="currentPhoto" class="current-photo" />
+        </div>
+
+        <div id="editMessage" class="message"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn-save">
+            <i class="fas fa-save"></i>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>    
+    <footer class="dashboard-footer">
+      <div class="footer-info">
+        <p>&copy; 2024 User Management System. All rights reserved.</p>
+      </div>
+      <div class="footer-badge">
+        <i class="fas fa-shield-alt"></i> Secure & Reliable
+      </div>
+    </footer>  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
