@@ -79,9 +79,9 @@ function displayUsers(users) {
   }
   
   tbody.innerHTML = users.map(user => `
-    <tr>
+    <tr data-user-id="${user._id}" class="user-row" style="cursor: pointer;">
       <td>
-        <img src="/uploads/${user.photo}" 
+        <img src="${API_BASE_URL}/uploads/${user.photo}" 
              alt="${user.name}" 
              class="user-photo"
              loading="lazy"
@@ -217,23 +217,60 @@ function attachTableEventListeners() {
   
   // Use event delegation on tbody
   tbody.addEventListener('click', function(e) {
-    const target = e.target.closest('button');
-    if (!target) return;
+    // Check if a button was clicked
+    const button = e.target.closest('button');
+    if (button) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const userId = button.getAttribute('data-user-id');
+      
+      if (button.classList.contains('btn-edit')) {
+        openEditModal(userId);
+      } else if (button.classList.contains('btn-delete')) {
+        deleteUser(userId);
+      }
+      return;
+    }
     
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const userId = target.getAttribute('data-user-id');
-    
-    if (target.classList.contains('btn-edit')) {
-      openEditModal(userId);
-    } else if (target.classList.contains('btn-delete')) {
-      deleteUser(userId);
+    // If no button clicked, check if row was clicked
+    const row = e.target.closest('.user-row');
+    if (row) {
+      const userId = row.getAttribute('data-user-id');
+      openPreviewModal(userId);
     }
   });
   
   tableListenersAttached = true;
   console.log("Table event listeners attached");
+}
+
+// 🔹 Open Preview Modal
+function openPreviewModal(userId) {
+  const user = allUsers.find(u => u._id === userId);
+  if (!user) return;
+  
+  document.getElementById("previewName").textContent = user.name;
+  document.getElementById("previewDob").textContent = new Date(user.dob).toLocaleDateString();
+  document.getElementById("previewEmail").textContent = user.email;
+  document.getElementById("previewMobile").textContent = user.mobile;
+  document.getElementById("previewCreated").textContent = new Date(user.createdAt).toLocaleString();
+  
+  const previewPhoto = document.getElementById("previewPhoto");
+  previewPhoto.src = `${API_BASE_URL}/uploads/${user.photo}`;
+  previewPhoto.onerror = function() {
+    this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="%23e2e8f0" width="200" height="200"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23718096" font-size="20">No Photo</text></svg>';
+  };
+  
+  // Store user ID for edit button
+  document.getElementById("previewEditBtn").setAttribute('data-user-id', userId);
+  
+  document.getElementById("previewModal").classList.add("show");
+}
+
+// 🔹 Close Preview Modal
+function closePreviewModal() {
+  document.getElementById("previewModal").classList.remove("show");
 }
 
 // 🔹 File input handler for edit form
@@ -366,5 +403,34 @@ document.getElementById('cancelModalBtn').addEventListener('click', function(e) 
 document.getElementById('editModal').addEventListener('click', function(e) {
   if (e.target === this) {
     closeEditModal();
+  }
+});
+
+// Preview modal close button listeners
+document.getElementById('closePreviewBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  closePreviewModal();
+});
+
+document.getElementById('previewCloseBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  closePreviewModal();
+});
+
+// Preview modal edit button
+document.getElementById('previewEditBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const userId = this.getAttribute('data-user-id');
+  closePreviewModal();
+  setTimeout(() => openEditModal(userId), 300);
+});
+
+// Close preview modal when clicking outside
+document.getElementById('previewModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closePreviewModal();
   }
 });

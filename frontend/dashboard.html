@@ -187,7 +187,56 @@
           </button>
         </div>
       </form>
-    </div>    
+    </div>
+  </div>
+
+  <!-- User Preview Modal -->
+  <div id="previewModal" class="modal">
+    <div class="modal-content preview-modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-circle"></i> User Details</h2>
+        <button type="button" class="close-btn" id="closePreviewBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="preview-body">
+        <div class="preview-photo-section">
+          <img id="previewPhoto" class="preview-photo" alt="User Photo" />
+        </div>
+        <div class="preview-details">
+          <div class="preview-field">
+            <label><i class="fas fa-user"></i> Name</label>
+            <p id="previewName"></p>
+          </div>
+          <div class="preview-field">
+            <label><i class="fas fa-calendar"></i> Date of Birth</label>
+            <p id="previewDob"></p>
+          </div>
+          <div class="preview-field">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <p id="previewEmail"></p>
+          </div>
+          <div class="preview-field">
+            <label><i class="fas fa-phone"></i> Mobile</label>
+            <p id="previewMobile"></p>
+          </div>
+          <div class="preview-field">
+            <label><i class="fas fa-clock"></i> Created</label>
+            <p id="previewCreated"></p>
+          </div>
+        </div>
+      </div>
+      <div class="preview-actions">
+        <button type="button" class="btn-preview-edit" id="previewEditBtn">
+          <i class="fas fa-edit"></i> Edit User
+        </button>
+        <button type="button" class="btn-preview-close" id="previewCloseBtn">
+          <i class="fas fa-times-circle"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+    
     <footer class="dashboard-footer">
       <div class="footer-info">
         <p>&copy; 2024 User Management System. All rights reserved.</p>
