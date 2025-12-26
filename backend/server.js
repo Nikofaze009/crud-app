@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const path = require("path");
+const fs = require("fs");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
@@ -13,6 +14,12 @@ const connectDB = require("./config/db");
 
 const app = express();
 
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, "..", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("✅ Created uploads directory");
+}
 
 // Middleware
 app.use(cors({
